@@ -46,12 +46,29 @@ New-NetFirewallRule -DisplayName "Lab Frontend" -Direction Inbound -Action Allow
 New-NetFirewallRule -DisplayName "Lab API"      -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8000 -Profile Private
 ```
 
-### 3. Student: set D3PENTEST network to NAT (VMware)
+### 3. Students: create and set up your account (browser)
+
+While the server is running and **before booting Kali**, each student builds a profile
+that classmates will investigate later. From a browser on the same network:
+
+1. Open **`http://10.3.3.100:3001`** and **register a new account**.
+2. Go to your **profile** → edit your **bio** and add the **profile / cover pictures**
+   you want.
+3. **Add classmates as friends:** type a classmate's name in the **search bar**, open
+   their profile, and send a friend request. The classmate **accepts** the incoming
+   request.
+4. **Reload the page** to see friend-request / acceptance **notifications** — they
+   don't appear until the page refreshes.
+
+This seeds everyone as a live target, so after the Kali lab is set up students can
+OSINT each other, not just the seeded accounts.
+
+### 4. Student: set D3PENTEST network to NAT (VMware)
 
 In **VMware → D3PENTEST → Settings → Network Adapter**, select **NAT**, then start
 the VM. (NAT lets Kali reach the host at `10.3.3.100` without extra configuration.)
 
-### 4. Student: confirm Kali can reach the host
+### 5. Student: confirm Kali can reach the host
 
 ```bash
 ping -c 3 10.3.3.100
@@ -61,7 +78,7 @@ curl -i "http://10.3.3.100:8000/searchUsers?q=Megan"
 An HTTP response = reachable. `GET /` returning `404 Cannot GET /` is **normal** — the
 API has no root route, but a 404 still proves the server answered.
 
-### 5. Student: get the OSINT client
+### 6. Student: get the OSINT client
 
 ```bash
 cd ~
@@ -69,7 +86,7 @@ git clone https://github.com/Tsuyoiman/OSINTPROJECT.git
 cd OSINTPROJECT      # already cloned? run: git pull
 ```
 
-### 6. Student: check `config.py`
+### 7. Student: check `config.py`
 
 It already ships set to the static host — usually nothing to change:
 
@@ -80,7 +97,7 @@ FRONTEND_PORT = 3001
 AUTHORIZED_NETWORK = "10.3.3.0/24"   # only range option 6 may scan
 ```
 
-### 7. Student: install and launch
+### 8. Student: install and launch
 
 ```bash
 chmod +x install.sh osint-lab
@@ -91,7 +108,7 @@ chmod +x install.sh osint-lab
 If the virtualenv step fails (`ensurepip` missing), the installer automatically falls
 back to `pip install --break-system-packages` — that's fine.
 
-### 8. Test the connection
+### 9. Test the connection
 
 In the menu pick **`[1] Test Target Connection`** → expect `Target is reachable (HTTP 200)`.
 
@@ -113,7 +130,8 @@ Run the menu options in order — each feeds the next:
 
 **Starter demo:** `[2] Megan` → `@megan_fox`, then `[3] megan_fox`, `[4]`, `[5]`, `[7]`.
 Seeded handles: `megan_fox`, `zendaya`, `margot_robbie`, `ana_de_armas`, `jenna_ortega`,
-`scarlett_johansson`.
+`scarlett_johansson`. Students can also search a **classmate's name** (from Step 3) and
+investigate their account the same way.
 
 Reports are saved to `output/report_<username>_<timestamp>.txt` on the Kali VM.
 
