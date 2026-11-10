@@ -116,17 +116,56 @@ In the menu pick **`[1] Test Target Connection`** → expect `Target is reachabl
 
 ## The investigation flow (the lesson)
 
-Run the menu options in order — each feeds the next:
+Run the menu options in order — each one feeds the next.
 
-| Step | Option | What students do | What they learn |
-|---|---|---|---|
-| 1 | `[1]` Test connection | Confirm Kali reaches the API | Recon needs a reachable, in-scope target |
-| 2 | `[2]` Search users | Search a clue (`Megan`, a name, an email) → get `@username` | Turning a weak clue into an identifier |
-| 3 | `[3]` Investigate profile | Enter the `@username` → bio, job, city, posts, friends | How much one profile exposes |
-| 4 | `[4]` Correlate friends/orgs | Pivot through the target's friends | **Core lesson:** harmless facts reveal more when linked |
-| 5 | `[5]` Download images + EXIF | Save public images; read metadata | Images carry hidden data |
-| 6 | `[6]` Authorized recon | Nmap the authorized target only | Services/ports — and staying in scope |
-| 7 | `[7]` Generate report | Produce the 17-section report | Findings → defensible documentation |
+**`[1]` Test Target Connection**
+- *What it does:* sends an HTTP request to the lab API and confirms Kali can reach it
+  (`Target is reachable (HTTP 200)` → `classroom website detected`).
+- *What you learn:* every investigation starts by proving you have a **reachable,
+  in-scope target**, and how to read HTTP responses — `200` = up, a `404` at `/` is
+  normal here, a timeout means a network/firewall/port problem.
+
+**`[2]` Search Public Users**
+- *What it does:* queries the public `/searchUsers` endpoint by first name, last name,
+  full name, or registration email and returns the matching public **`@usernames`**.
+- *What you learn:* how a weak clue (just a name or an email) **resolves to a stable
+  identifier** — the username is the key you pivot on for everything after this.
+
+**`[3]` Investigate Profile**
+- *What it does:* pulls the full public profile for a username (or resolves an email to
+  its username first) — name, bio, job, workplace, college, current city, hometown,
+  organizations, clue references, public posts, and public friends — and logs it as
+  evidence.
+- *What you learn:* **how much a single "public" profile exposes** when it's all read
+  at once, and why evidence should be recorded as you go, not from memory.
+
+**`[4]` Correlate Friends & Organizations**
+- *What it does:* pivots through the target's public friends, pulls each of their
+  profiles, and reports related usernames, workplaces, and **shared organizations**.
+- *What you learn:* **the core OSINT lesson** — several individually harmless facts
+  become revealing once connected. This is relationship mapping: people leak
+  information about each other through their network.
+
+**`[5]` Download Profile Images (EXIF)**
+- *What it does:* downloads the publicly served profile and cover images to
+  `output/images/<username>/`, and runs **ExifTool** on them if it's installed.
+- *What you learn:* **images are data, not just pictures** — metadata (EXIF) can carry
+  camera, software, timestamps, and sometimes location, all without anyone noticing.
+
+**`[6]` Authorized Network Reconnaissance (Nmap)**
+- *What it does:* runs a service/version scan (`nmap -sV -Pn`) against a target, but
+  **only inside `AUTHORIZED_NETWORK`** — it refuses any out-of-scope address.
+- *What you learn:* moving from people/web OSINT to **network recon** — finding open
+  ports, services, and versions — and that real recon is **bounded by authorization**;
+  staying in scope is the rule, not a suggestion.
+
+**`[7]` Generate OSINT Investigation Report**
+- *What it does:* compiles everything collected into a structured **17-section report**
+  (objective, scope, findings, correlation, images, recon, evidence, ethics,
+  limitations, conclusion) saved under `output/`.
+- *What you learn:* turning raw findings into **clear, defensible documentation** —
+  separating fact from inference and writing results the way a real security report is
+  written.
 
 **Starter demo:** `[2] Megan` → `@megan_fox`, then `[3] megan_fox`, `[4]`, `[5]`, `[7]`.
 Seeded handles: `megan_fox`, `zendaya`, `margot_robbie`, `ana_de_armas`, `jenna_ortega`,
