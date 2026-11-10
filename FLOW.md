@@ -36,8 +36,8 @@ flowchart TD
         CLI["OSINTPROJECT<br/>./osint-lab"]
     end
 
-    FFX -->|"http://LAN_IP:3001"| FE
-    CLI -->|"http://LAN_IP:8000"| API
+    FFX -->|"http://10.3.3.100:3001"| FE
+    CLI -->|"http://10.3.3.100:8000"| API
 
     CLI --> CHAIN
     subgraph CHAIN["🔎 Investigation chain (the lesson)"]
@@ -59,7 +59,7 @@ relationships → images → authorized scan → written report.*
 |---|---|
 | Node.js + npm installed | VMware/VirtualBox with a Kali VM |
 | `Facebook-and-Osint-Lab` cloned | Python 3 + `git` |
-| On the authorized classroom LAN | Able to reach the Windows host over the LAN |
+| Static LAN IP **`10.3.3.100`** | Able to reach `10.3.3.100` over the LAN |
 
 Decide the **network path** between the two before class:
 
@@ -81,18 +81,19 @@ npm run install:all     # first time only (may download MongoDB — can take min
 npm run dev             # starts frontend + backend + local MongoDB together
 ```
 
-The terminal prints the addresses students need. Example:
+The host IP is fixed at **`10.3.3.100`**. The terminal prints the addresses students
+use:
 
 ```text
 on this machine:  http://localhost:3001
-on Wi-Fi:         http://10.3.3.171:3001     <-- frontend (browser)
-api:              http://10.3.3.171:8000     <-- API (OSINT client)
+on Wi-Fi:         http://10.3.3.100:3001     <-- frontend (browser)
+api:              http://10.3.3.100:8000     <-- API (OSINT client)
 ```
 
 Then:
 
-1. **Write the LAN IP and both ports on the board.** Ports change if `3001`/`8000`
-   are busy — always use what the terminal actually printed.
+1. **Note both ports.** The IP stays `10.3.3.100`, but a port changes if `3001`/`8000`
+   is already busy — use whatever the terminal actually printed.
 2. **Keep the PowerShell window open** the whole class.
 3. **Allow the ports through Windows Firewall** (PowerShell as Administrator, private
    network only):
@@ -112,10 +113,10 @@ confirm the site loads.
 
 Run on each **Kali VM**:
 
-**a. Confirm Kali can reach the host** (use the instructor's LAN IP):
+**a. Confirm Kali can reach the host** (`10.3.3.100`):
 ```bash
-ping -c 3 10.3.3.171
-curl -i "http://10.3.3.171:8000/searchUsers?q=Megan"
+ping -c 3 10.3.3.100
+curl -i "http://10.3.3.100:8000/searchUsers?q=Megan"
 ```
 An HTTP response = reachable. (The API has no `/` route, so `GET /` returning
 `404 Cannot GET /` is **normal** — it still proves a server answered.)
@@ -127,17 +128,19 @@ git clone https://github.com/Tsuyoiman/OSINTPROJECT.git
 cd OSINTPROJECT
 ```
 
-**c. Edit `config.py`** to match today's instructor address:
+**c. Check `config.py`** — it already ships set to the static host, so usually there's
+nothing to change:
 ```bash
 nano config.py
 ```
 ```python
-LAB_IP = "10.3.3.171"        # instructor LAN IP from the board
-LAB_PORT = 8000              # API port
+LAB_IP = "10.3.3.100"        # static instructor IP — already set
+LAB_PORT = 8000              # API port (change only if the terminal printed another)
 FRONTEND_PORT = 3001         # frontend port
 AUTHORIZED_NETWORK = "10.3.3.0/24"   # only range option 6 may scan
 ```
-Save: `Ctrl+O`, `Enter`, `Ctrl+X`.
+Only edit a **port** if the instructor's terminal printed something other than
+`8000`/`3001`. Save: `Ctrl+O`, `Enter`, `Ctrl+X`.
 
 **d. Install and launch:**
 ```bash
@@ -222,7 +225,7 @@ reconnaissance, evidence handling, and clear security reporting.
 
 | Symptom | First thing to check |
 |---|---|
-| `[1]` says target unavailable | Is `npm run dev` still running? Is `LAB_IP`/`LAB_PORT` current? Firewall? |
+| `[1]` says target unavailable | Is `npm run dev` still running? Does `LAB_PORT` match the printed port? Firewall? (IP is fixed at `10.3.3.100`) |
 | Browser won't load site in Kali | Use the **LAN IP**, not `localhost`; set Firefox to **No proxy** |
 | `curl` works but browser doesn't | Firefox proxy, or wrong port — use the port the terminal printed |
 | Ports aren't 3001/8000 | The launcher picked free ports; use the printed ones and update `config.py` |
