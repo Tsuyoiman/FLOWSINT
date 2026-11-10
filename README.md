@@ -52,7 +52,7 @@ While the server is running and **before booting Kali**, each student builds a p
 that classmates will investigate later. From a browser on the same network:
 
 1. Open **`http://10.3.3.100:3001`** and **register a new account**.
-2. Go to your **profile** → edit your **bio** and add the **profile / cover pictures**
+2. Go to your **profile** → edit your **bio** and add the **profile picture**
    you want.
 3. **Add classmates as friends:** type a classmate's name in the **search bar**, open
    their profile, and send a friend request. The classmate **accepts** the incoming
